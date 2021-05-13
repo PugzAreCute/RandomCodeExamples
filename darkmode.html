@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Darkmode Example</title>
+</head>
+<body class="darken">
+<label for="auto" class="lighten">Auto Theme: </label>
+<input type="checkbox" id="auto" onclick="auto()">
+<label for="manual" class="lighten">Lightmode: </label>
+<input type="checkbox" id="manual" onclick="switchTheme()">
+<h1 class="lighten">HTML Darkmode/Lightmode Example</h1>
+<!-- Note: Things that should be made white should be attached to class "lighten" and things that should be made darker should be given class "darken" (This is from a lightmode -> darkmode point of view)-->
+<!-- Placeholder text -->
+<p class="lighten">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+    et dolore magna aliqua. Arcu dictum varius duis at consectetur lorem. Ac turpis egestas maecenas pharetra convallis
+    posuere. Tellus mauris a diam maecenas sed enim ut. Lectus arcu bibendum at varius vel pharetra vel. Neque convallis
+    a cras semper auctor. Vestibulum lorem sed risus ultricies tristique. Pharetra vel turpis nunc eget lorem dolor sed.
+    Proin fermentum leo vel orci porta non pulvinar. Elit ullamcorper dignissim cras tincidunt lobortis. Posuere
+    sollicitudin aliquam ultrices sagittis orci. Mauris a diam maecenas sed enim ut sem. Ridiculus mus mauris vitae
+    ultricies. Dignissim cras tincidunt lobortis feugiat. In massa tempor nec feugiat nisl pretium fusce id velit.</p>
+</body>
+<!-- Begin JS-->
+<script type="text/javascript">
+    //The id it uses for the localstorage entry
+    const THEME_VAR = "preferredTheme";
+    //Query CSS prefers-color-scheme for Auto-Theme
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: light)")
+
+    //Create a localstorage entry is it dosent exist!
+    if(localStorage.getItem(THEME_VAR) === null){
+        localStorage.setItem(THEME_VAR,"auto")
+    }
+
+    //Call the paint function to "color the page!"
+    paint()
+
+    //Stuff so that on reload the checkboxes are checked
+    if (localStorage.getItem(THEME_VAR) === "auto") {
+        //set element with id "auto" to be checked by default
+        document.getElementById("auto").checked = true
+        //prevent user from interacting with the lightmode checkbox if auto theme is enabled
+        //make the cursor an X
+        document.getElementById("manual").style.cursor = "not-allowed";
+        //disable the checkbox
+        document.getElementById("manual").disabled = true;
+    }
+    if (localStorage.getItem(THEME_VAR) === "light") {
+        document.getElementById("manual").checked = true
+    }
+    //Basically the same thing as above but for the media query
+    if(mediaQuery.matches && localStorage.getItem(THEME_VAR) === "auto"){
+        paint()
+        document.getElementById("manual").checked = true
+    }
+
+    //Auto Theme
+    function auto() {
+        if (localStorage.getItem(THEME_VAR) === "auto") {
+            localStorage.setItem(THEME_VAR, "light")
+            document.getElementById("manual").style.cursor = "default";
+            document.getElementById("manual").disabled = false;
+        } else {
+            localStorage.setItem(THEME_VAR, "auto")
+            document.getElementById("manual").style.cursor = "not-allowed";
+            document.getElementById("manual").disabled = true;
+        }
+        paint()
+    }
+
+    //Switch theme in manual mode
+    function switchTheme() {
+        if (localStorage.getItem(THEME_VAR) === "light") {
+            localStorage.setItem(THEME_VAR, "dark")
+        } else if (localStorage.getItem(THEME_VAR) === "dark") {
+            localStorage.setItem(THEME_VAR, "light")
+        }
+        paint()
+    }
+
+    //haha here comes the messy paint function
+    function paint() {
+        if (localStorage.getItem(THEME_VAR) === "light") {
+            //Do code if localstorage object is light
+            //iterate through every item with class "lighten"
+            for (let i = 0, len = document.getElementsByClassName("lighten").length; i < len; i++) {
+                //set color of all items with class "lighten"
+                //Note: you can replace the word with hex codes to!
+                document.getElementsByClassName("lighten")[i].style.color = 'black';
+            }
+            //exactly same as above but with class "darken"
+            for (let e = 0, len = document.getElementsByClassName("darken").length; e < len; e++) {
+                document.getElementsByClassName("darken")[e].style.color = 'white';
+            }
+            document.body.style.backgroundColor = "white"
+        }
+        else if (localStorage.getItem(THEME_VAR) === "dark") {
+            //same as above if loop but for when the localstorage object is "dark"
+            for (let i = 0, len = document.getElementsByClassName("lighten").length; i < len; i++) {
+                document.getElementsByClassName("lighten")[i].style.color = 'white';
+            }
+            for (let e = 0, len = document.getElementsByClassName("darken").length; e < len; e++) {
+                document.getElementsByClassName("darken")[e].style.color = 'black';
+            }
+            //demo of hex codes
+            document.body.style.backgroundColor = "#181A1B"
+        }
+        else if(localStorage.getItem(THEME_VAR) === "auto" && mediaQuery.matches){
+            //same as above else if loop but for when the localstorage object is "auto" and the mediaQuery matches
+            for (let i = 0, len = document.getElementsByClassName("lighten").length; i < len; i++) {
+                document.getElementsByClassName("lighten")[i].style.color = 'black';
+            }
+            for (let e = 0, len = document.getElementsByClassName("darken").length; e < len; e++) {
+                document.getElementsByClassName("darken")[e].style.color = 'white';
+            }
+            document.body.style.backgroundColor = "white"
+        }else if(localStorage.getItem(THEME_VAR) === "auto" && !mediaQuery.matches){
+            //same as above else if loop but only executes if the mediaquery DOSENT match
+            for (let i = 0, len = document.getElementsByClassName("lighten").length; i < len; i++) {
+                document.getElementsByClassName("lighten")[i].style.color = 'white';
+            }
+            for (let e = 0, len = document.getElementsByClassName("darken").length; e < len; e++) {
+                document.getElementsByClassName("darken")[e].style.color = 'black';
+            }
+            document.body.style.backgroundColor = "#181A1B"
+        }
+    }
+</script>
+</html>
